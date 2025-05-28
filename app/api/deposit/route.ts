@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const depositData = await fetch(
     "https://wts-api.tossinvest.com/api/v3/my-assets/transactions/markets/kr?size=50&filters=0&range.from=2024-11-01&range.to=2025-05-29",
     {
