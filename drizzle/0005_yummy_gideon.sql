@@ -1,0 +1,1 @@
+ALTER TABLE "menus" ADD COLUMN "available" boolean DEFAULT true NOT NULL;

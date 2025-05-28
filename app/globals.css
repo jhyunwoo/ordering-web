@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+.panel-box {
+    @apply p-2 rounded-lg bg-white
+}
+
+.default-input {
+    @apply w-full p-1 px-2 rounded-lg ring-2 ring-sky-500 focus:ring-sky-700 transition-colors
+}
+
+.panel-create-button {
+    @apply p-1 px-2 rounded-lg text-white bg-neutral-950 text-sm
+}

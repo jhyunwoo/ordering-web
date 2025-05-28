@@ -5,8 +5,13 @@ import {
   text,
   primaryKey,
   integer,
+  serial,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
+import { relations } from "drizzle-orm";
+
+export const roleEnum = pgEnum("role", ["USER", "ADMIN"]);
 
 export const users = pgTable("user", {
   id: text("id")
@@ -16,6 +21,7 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+  role: roleEnum("role").default("USER").notNull(),
 });
 
 export const accounts = pgTable(
@@ -90,3 +96,83 @@ export const authenticators = pgTable(
     },
   ],
 );
+
+export const tables = pgTable("table", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull().unique(),
+  key: integer("key").notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
+  deletedAt: timestamp("deletedAt"),
+});
+
+export const tablesRelations = relations(tables, ({ many }) => ({
+  posts: many(userRequests),
+}));
+
+export const userRequests = pgTable("userRequests", {
+  id: serial("id").primaryKey(),
+  tableId: text("tableId").notNull(),
+  amount: integer("amount").default(0),
+  paid: boolean("paid").default(false).notNull(),
+});
+
+export const userRequestsRelations = relations(
+  userRequests,
+  ({ one, many }) => ({
+    table: one(tables, {
+      fields: [userRequests.tableId],
+      references: [tables.id],
+    }),
+    orders: many(orders),
+  }),
+);
+
+export const orderStatusEnum = pgEnum("status", [
+  "WAITING",
+  "PENDING",
+  "COMPLETE",
+]);
+
+export const orders = pgTable("orders", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userRequestId: integer("userRequestId").notNull(),
+  menuName: text("menuName").notNull(),
+  menuPrice: integer("menuPrice").default(0),
+  status: orderStatusEnum("status").default("WAITING"),
+  tableName: text("tableName").notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
+  deletedAt: timestamp("deletedAt"),
+});
+
+export const ordersRelations = relations(orders, ({ one }) => ({
+  userRequest: one(userRequests, {
+    fields: [orders.userRequestId],
+    references: [userRequests.id],
+  }),
+}));
+
+export const deposits = pgTable("deposits", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  amount: integer("amount").notNull(),
+  createdAt: timestamp("createdAt").notNull(),
+});
+
+export const menus = pgTable("menus", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  image: text("image"),
+  description: text("description").notNull(),
+  price: integer("price").notNull(),
+  quantity: integer("totalQuantity").notNull().default(0),
+  available: boolean("available").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
+  deletedAt: timestamp("deletedAt"),
+});
