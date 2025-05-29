@@ -196,3 +196,33 @@ export async function createTable(prevState: any, formData: FormData) {
   }
   return { result: "테이블이 성공적으로 추가되었습니다." };
 }
+
+export async function updateOrderStatus(prev: any, formData: FormData) {
+  const session = await auth();
+  if (!session) {
+    return redirect("/auth/sign-in");
+  }
+  if (!(await checkUserRole({ userId: session?.user?.id, role: "ADMIN" }))) {
+    forbidden();
+  }
+
+  const status = formData.get("status") as "WAITING" | "PENDING" | "COMPLETE";
+  const orderId = formData.get("orderId") as string;
+
+  console.log(orderId, status);
+
+  if (!status || !orderId) {
+    return { result: "잘못된 요청입니다." };
+  }
+
+  try {
+    await db
+      .update(orders)
+      .set({ status: status })
+      .where(eq(orders.id, orderId));
+  } catch (e) {
+    console.error(e);
+    return { result: "데이터베이스에 저장하는 중 오류가 발생했습니다." };
+  }
+  return { result: "주문 상태가 성공적으로 업데이트 되었습니다." };
+}

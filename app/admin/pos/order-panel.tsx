@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 import { modalState, posDataState } from "@/lib/states";
 import CreateOrderModal from "@/app/admin/pos/create-order-modal";
-import orderStatusConverter from "@/lib/order-status-converter";
+import OrderComponent from "@/app/admin/pos/order-component";
 
 export default function OrderPanel() {
   const [orderStatus, setOrderStatus] = useState<
@@ -13,6 +13,7 @@ export default function OrderPanel() {
   const [isOpen, setIsOpen] = useAtom(modalState);
   const [posData] = useAtom(posDataState);
 
+  console.log("posData", posData);
   return (
     <div className={"panel-box flex flex-col gap-2"}>
       <div className={"flex items-center justify-between"}>
@@ -32,7 +33,7 @@ export default function OrderPanel() {
           onClick={() => setOrderStatus("PENDING")}
           className={`${orderStatus === "PENDING" ? "bg-neutral-950 text-white ring-neutral-950" : "bg-neutral-100 ring-neutral-500"} px-2 p-1 rounded-lg ring-1`}
         >
-          입금 완료
+          조리중
         </button>
         <button
           type={"button"}
@@ -52,31 +53,7 @@ export default function OrderPanel() {
       <div className={"w-full flex flex-col gap-2"}>
         {posData?.orders
           ?.filter((data) => data.status === orderStatus)
-          ?.map((order, i) => (
-            <div key={i} className={"bg-neutral-50 p-1 px-2 rounded-lg"}>
-              <div
-                className={
-                  "flex items-center justify-between font-semibold text-lg py-1"
-                }
-              >
-                <div>메뉴: {order.menuName}</div>
-                <div>테이블: {order.tableName}</div>
-              </div>
-              <div>상태: {orderStatusConverter(order.status)}</div>
-
-              <div>
-                주문 시각:{" "}
-                {new Intl.DateTimeFormat("ko-KR", {
-                  month: "2-digit",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                  hour12: false,
-                }).format(new Date(order.createdAt!))}
-              </div>
-            </div>
-          ))}
+          ?.map((order, i) => <OrderComponent orderData={order} key={i} />)}
       </div>
     </div>
   );

@@ -32,6 +32,7 @@ export default async function getPosData() {
       soldQuantity: quantity,
     });
   }
+
   return {
     orders: orderData,
     tables: tableData,
