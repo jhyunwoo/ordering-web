@@ -3,6 +3,7 @@ import "./globals.css";
 import { ReactNode } from "react";
 import AuthProvider from "@/app/components/auth-provider";
 import JotaiProvider from "@/app/components/jotai-provider";
+import QueryProvider from "@/app/components/query-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="ko">
       <body className={"bg-neutral-50"}>
         <AuthProvider>
-          <JotaiProvider>{children}</JotaiProvider>
+          <JotaiProvider>
+            <QueryProvider>{children}</QueryProvider>
+          </JotaiProvider>
         </AuthProvider>
       </body>
     </html>

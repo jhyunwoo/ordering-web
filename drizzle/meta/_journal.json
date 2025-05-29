@@ -57,6 +57,20 @@
       "when": 1748456933845,
       "tag": "0007_flaky_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1748487749406,
+      "tag": "0008_sticky_snowbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1748492134016,
+      "tag": "0009_motionless_starfox",
+      "breakpoints": true
     }
   ]
 }

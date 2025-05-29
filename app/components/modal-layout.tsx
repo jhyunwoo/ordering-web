@@ -26,7 +26,7 @@ export default function ModalLayout({
       onClick={handleBackgroundClick}
     >
       <div
-        className={"w-full max-w-3xl max-h-1/2 p-4 rounded-xl bg-white"}
+        className={"w-full max-w-3xl p-4 rounded-xl bg-white"}
         onClick={handleModalClick}
       >
         {children}

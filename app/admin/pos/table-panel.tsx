@@ -24,7 +24,12 @@ export default function TablePanel() {
       </div>
       <div className={"grid grid-cols-3 gap-2"}>
         {posData?.tables?.map((table, i) => (
-          <div key={i} className={"p-2 rounded-lg bg-neutral-100"}>
+          <div
+            key={i}
+            className={
+              "p-2 rounded-lg bg-neutral-100 flex items-center justify-center h-24"
+            }
+          >
             <div>{table.name}</div>
           </div>
         ))}

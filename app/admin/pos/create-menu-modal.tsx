@@ -29,7 +29,6 @@ export default function CreateMenuModal({
     startTransition(() => formAction(formData));
     setIsOpen(false);
   }
-
   return (
     <ModalLayout isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className={"w-full flex flex-col items-center justify-center"}>

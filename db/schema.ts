@@ -102,7 +102,6 @@ export const tables = pgTable("table", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull().unique(),
-  key: integer("key").notNull(),
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt").defaultNow(),
   deletedAt: timestamp("deletedAt"),
@@ -117,6 +116,9 @@ export const userRequests = pgTable("userRequests", {
   tableId: text("tableId").notNull(),
   amount: integer("amount").default(0),
   paid: boolean("paid").default(false).notNull(),
+  key: integer("key").notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
+  deletedAt: timestamp("deletedAt"),
 });
 
 export const userRequestsRelations = relations(
@@ -141,6 +143,7 @@ export const orders = pgTable("orders", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   userRequestId: integer("userRequestId").notNull(),
+  menuId: serial("menuId").notNull(),
   menuName: text("menuName").notNull(),
   menuPrice: integer("menuPrice").default(0),
   status: orderStatusEnum("status").default("WAITING"),
@@ -154,6 +157,10 @@ export const ordersRelations = relations(orders, ({ one }) => ({
   userRequest: one(userRequests, {
     fields: [orders.userRequestId],
     references: [userRequests.id],
+  }),
+  menu: one(menus, {
+    fields: [orders.menuId],
+    references: [menus.id],
   }),
 }));
 
@@ -176,3 +183,7 @@ export const menus = pgTable("menus", {
   updatedAt: timestamp("updatedAt").defaultNow(),
   deletedAt: timestamp("deletedAt"),
 });
+
+export const menusRelations = relations(menus, ({ many }) => ({
+  orders: many(orders),
+}));

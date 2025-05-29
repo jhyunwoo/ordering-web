@@ -7,25 +7,33 @@ import { useEffect } from "react";
 import getPosData from "@/lib/get-pos-data";
 import { useAtom } from "jotai";
 import { posDataState } from "@/lib/states";
+import { useQuery } from "@tanstack/react-query";
 
 export type PosData = Awaited<ReturnType<typeof getPosData>>;
+
+async function fetchData(): Promise<PosData> {
+  const response = await fetch("/api/pos");
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+}
 
 export default function PosPage() {
   const [, setPosData] = useAtom(posDataState);
 
+  const { data, error, isLoading } = useQuery<PosData>({
+    queryKey: ["posData"],
+    queryFn: fetchData,
+    staleTime: 0,
+    refetchInterval: 1000, // 1초마다 refetch
+  });
+
   useEffect(() => {
-    async function fetchData() {
-      const response = await fetch("/api/pos");
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setPosData(data);
-      } else {
-        console.error("Failed to fetch POS data");
-      }
+    if (data) {
+      setPosData(data); // 데이터를 jotai 상태로 저장
     }
-    fetchData();
-  }, []);
+  }, [data, setPosData]);
 
   return (
     <div

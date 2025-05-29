@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 import { modalState, posDataState } from "@/lib/states";
 import CreateOrderModal from "@/app/admin/pos/create-order-modal";
+import orderStatusConverter from "@/lib/order-status-converter";
 
 export default function OrderPanel() {
   const [orderStatus, setOrderStatus] = useState<
@@ -48,14 +49,32 @@ export default function OrderPanel() {
           처리 완료
         </button>
       </div>
-      <div>
+      <div className={"w-full flex flex-col gap-2"}>
         {posData?.orders
           ?.filter((data) => data.status === orderStatus)
           ?.map((order, i) => (
-            <div key={i}>
-              <div>{order.menuName}</div>
-              <div>{order.status}</div>
-              <div>{order.tableName}</div>
+            <div key={i} className={"bg-neutral-50 p-1 px-2 rounded-lg"}>
+              <div
+                className={
+                  "flex items-center justify-between font-semibold text-lg py-1"
+                }
+              >
+                <div>메뉴: {order.menuName}</div>
+                <div>테이블: {order.tableName}</div>
+              </div>
+              <div>상태: {orderStatusConverter(order.status)}</div>
+
+              <div>
+                주문 시각:{" "}
+                {new Intl.DateTimeFormat("ko-KR", {
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: false,
+                }).format(new Date(order.createdAt!))}
+              </div>
             </div>
           ))}
       </div>
